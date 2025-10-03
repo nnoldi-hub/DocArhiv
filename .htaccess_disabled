@@ -1,0 +1,19 @@
+# Apache Configuration pentru Arhiva Documente
+# Root .htaccess - Configurație minimă pentru a evita conflictele
+
+# Redirect toate cererile către directorul public
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Dacă nu este în directorul public, redirect acolo
+    RewriteCond %{REQUEST_URI} !^/document-archive/public/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ /document-archive/public/$1 [L,R=301]
+</IfModule>
+
+# Dezactivează listarea directoarelor
+Options -Indexes
+
+# Character encoding
+AddDefaultCharset UTF-8

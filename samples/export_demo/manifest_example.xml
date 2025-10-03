@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ArchivalPackage version="1.0">
+  <GeneratedAt>2025-10-03T12:00:00Z</GeneratedAt>
+  <Producer>Document Archive</Producer>
+  <CompanyFilter>all</CompanyFilter>
+  <Period>
+    <From>2025-09-01</From>
+    <To>2025-10-03</To>
+  </Period>
+  <Documents>
+    <Document id="123">
+      <OriginalFile>invoice-2025-09-15.pdf</OriginalFile>
+      <StoredPath>files/2025/09/invoice-2025-09-15_pdfa.pdf</StoredPath>
+      <Size>123456</Size>
+      <Mime>application/pdf</Mime>
+      <Hash algorithm="SHA-256">a1b2c3...deadbeef</Hash>
+      <CreatedAt>2025-09-15T10:30:00Z</CreatedAt>
+      <CompanyId>7</CompanyId>
+      <Metadata>
+        <Title>Factura 123</Title>
+        <Author>Firma SRL</Author>
+        <Category>Financiar</Category>
+        <UniqueId>INV-2025-123</UniqueId>
+      </Metadata>
+      <SignatureRef type="CAdES" href="signatures/INV-2025-123.p7s"/>
+    </Document>
+  </Documents>
+</ArchivalPackage>

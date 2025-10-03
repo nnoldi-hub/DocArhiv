@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DocumentMetadata>
+  <OriginalFile>invoice-2025-09-15.pdf</OriginalFile>
+  <Title>Factura 123</Title>
+  <Author>Firma SRL</Author>
+  <Category>Financiar</Category>
+  <UniqueId>INV-2025-123</UniqueId>
+  <Hash algorithm="SHA-256">a1b2c3...deadbeef</Hash>
+  <CreatedAt>2025-09-15T10:30:00Z</CreatedAt>
+</DocumentMetadata>
