@@ -11,7 +11,7 @@ define('DB_USER', 'rbcjgzba_nnoldi');
 define('DB_PASS', 'PetreIonel205!');
 
 // URL Settings - Hostico domain
-define('APP_URL', 'https://nnoldi.online');
+define('APP_URL', 'https://gusturidelatara.ro');
 
 // Storage Path - absolute path pe Hostico
 define('STORAGE_PATH', '/home/rbcjgzba/public_html/document-archive/storage');

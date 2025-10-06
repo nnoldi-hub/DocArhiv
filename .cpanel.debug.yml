@@ -1,0 +1,13 @@
+---
+deployment:
+  tasks:
+    # Deployment simplu pentru debug
+    - export APPPATH=/home/rbcjgzba/public_html/
+    - /bin/cp -R * $APPPATH/
+    
+    # Setează permisiuni
+    - /bin/chmod -R 755 $APPPATH/storage/
+    - /bin/chmod 644 $APPPATH/config/*.php
+    
+    # Activează production config
+    - /bin/cp $APPPATH/config/config.production.php $APPPATH/config/config.local.php

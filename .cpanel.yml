@@ -1,29 +1,27 @@
 ---
 deployment:
   tasks:
-    # Golește directorul public_html pentru fresh deployment
-    - export DEPLOYPATH=/home/rbcjgzba/public_html/
-    - /bin/cp -R public/* $DEPLOYPATH
-    
-    # Copy toate fișierele aplicației în subdirectory
+    # Deploy aplicația în subdirectory
     - export APPPATH=/home/rbcjgzba/public_html/document-archive/
     - /bin/mkdir -p $APPPATH
     
-    # Copy toate fișierele exceptând public/
-    - /bin/cp -R config $APPPATH
-    - /bin/cp -R database $APPPATH
-    - /bin/cp -R includes $APPPATH
-    - /bin/cp -R modules $APPPATH
-    - /bin/cp -R storage $APPPATH
-    - /bin/cp -R docs $APPPATH
-    - /bin/cp *.php $APPPATH
-    - /bin/cp *.md $APPPATH
+    # Copy toate fișierele aplicației
+    - /bin/cp -R * $APPPATH/
+    - /bin/cp -R .[^.]* $APPPATH/ 2>/dev/null || true
     
-    # Copy public/ files în document root
-    - /bin/cp -R public/* $DEPLOYPATH
+    # Setează Document Root către public/ 
+    - export PUBLICPATH=/home/rbcjgzba/public_html/public_gusturidelatara/
+    - /bin/mkdir -p $PUBLICPATH
+    - /bin/cp -R $APPPATH/public/* $PUBLICPATH/
     
-    # Setează permisiuni pentru storage
+    # Actualizează căile în index.php
+    - /bin/sed -i "s|require_once '../config/config.php'|require_once '/home/rbcjgzba/public_html/document-archive/config/config.php'|g" $PUBLICPATH/index.php
+    - /bin/sed -i "s|require_once '../includes/|require_once '/home/rbcjgzba/public_html/document-archive/includes/|g" $PUBLICPATH/*.php
+    
+    # Setează permisiuni
     - /bin/chmod -R 755 $APPPATH/storage/
+    - /bin/chmod -R 644 $APPPATH/config/
+    - /bin/chmod 755 $PUBLICPATH/
     
-    # Copy production config
+    # Activează production config
     - /bin/cp $APPPATH/config/config.production.php $APPPATH/config/config.local.php
