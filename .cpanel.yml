@@ -1,0 +1,29 @@
+---
+deployment:
+  tasks:
+    # Golește directorul public_html pentru fresh deployment
+    - export DEPLOYPATH=/home/rbcjgzba/public_html/
+    - /bin/cp -R public/* $DEPLOYPATH
+    
+    # Copy toate fișierele aplicației în subdirectory
+    - export APPPATH=/home/rbcjgzba/public_html/document-archive/
+    - /bin/mkdir -p $APPPATH
+    
+    # Copy toate fișierele exceptând public/
+    - /bin/cp -R config $APPPATH
+    - /bin/cp -R database $APPPATH
+    - /bin/cp -R includes $APPPATH
+    - /bin/cp -R modules $APPPATH
+    - /bin/cp -R storage $APPPATH
+    - /bin/cp -R docs $APPPATH
+    - /bin/cp *.php $APPPATH
+    - /bin/cp *.md $APPPATH
+    
+    # Copy public/ files în document root
+    - /bin/cp -R public/* $DEPLOYPATH
+    
+    # Setează permisiuni pentru storage
+    - /bin/chmod -R 755 $APPPATH/storage/
+    
+    # Copy production config
+    - /bin/cp $APPPATH/config/config.production.php $APPPATH/config/config.local.php
