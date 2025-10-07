@@ -26,7 +26,9 @@ function loadLocalBootstrapJS() {
 function renderBootstrapAssets() {
     // Folosim assets-uri locale pentru production
     if (defined('APP_URL') && strpos(APP_URL, 'gusturidelatara.ro') !== false) {
-        loadLocalAssets();
+        echo "\n<!-- Local Assets pentru Hostico -->\n";
+        echo '<link href="/assets/css/bootstrap.min.css" rel="stylesheet">' . "\n";
+        echo '<link href="/assets/css/bootstrap-icons.css" rel="stylesheet">' . "\n";
         return;
     }
     
@@ -38,7 +40,8 @@ function renderBootstrapAssets() {
 function renderBootstrapJS() {
     // Folosim assets-uri locale pentru production
     if (defined('APP_URL') && strpos(APP_URL, 'gusturidelatara.ro') !== false) {
-        loadLocalBootstrapJS();
+        echo "\n<!-- Bootstrap JS Local -->\n";
+        echo '<script src="/assets/js/bootstrap.bundle.min.js"></script>' . "\n";
         return;
     }
     

@@ -40,10 +40,20 @@ if (session_status() === PHP_SESSION_NONE) {
 // CONFIGURAȚII BAZĂ DE DATE
 // =============================================================================
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'arhiva_documente');
-define('DB_USER', 'root');  // Schimbă în producție
-define('DB_PASS', '');      // Schimbă în producție
+// Detectare automată production vs development
+if (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'gusturidelatara.ro') !== false) {
+    // Production - Hostico
+    define('DB_HOST', 'localhost');
+    define('DB_NAME', 'rbcjgzba_DocArhiv');
+    define('DB_USER', 'rbcjgzba_nnoldi');
+    define('DB_PASS', 'PetreIonel205!');
+} else {
+    // Development - Local
+    define('DB_HOST', 'localhost');
+    define('DB_NAME', 'arhiva_documente');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
+}
 define('DB_CHARSET', 'utf8mb4');
 define('DB_COLLATE', 'utf8mb4_unicode_ci');
 
@@ -60,7 +70,12 @@ define('DB_OPTIONS', [
 // =============================================================================
 
 // URL de bază al aplicației (fără slash la final)
-define('APP_URL', 'http://localhost/document-archive/public');
+// Se va detecta automat dacă rulează pe production
+if (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'gusturidelatara.ro') !== false) {
+    define('APP_URL', 'https://gusturidelatara.ro');
+} else {
+    define('APP_URL', 'http://localhost/document-archive/public');
+}
 define('BASE_PATH', dirname(__DIR__));
 
 // Căi importante
