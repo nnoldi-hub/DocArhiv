@@ -6,6 +6,10 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # Never rewrite asset files (CSS/JS/fonts/images)
+    RewriteRule ^assets/ - [L]
+    RewriteRule ^(.+)\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$ - [L]
+
     # Serve existing files/folders directly
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
@@ -13,8 +17,4 @@
 
     # Otherwise route to index.php
     RewriteRule ^ index.php [QSA,L]
-    
-    # Never rewrite asset files (CSS/JS/fonts/images)
-    RewriteRule ^assets/ - [L]
-    RewriteRule ^(.+)\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$ - [L]
 </IfModule>
