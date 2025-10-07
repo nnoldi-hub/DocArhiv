@@ -124,19 +124,19 @@ try {
                 
                 // Test 8: Citește userii
                 echo "<h2>Test 8: Citește Useri din superadmin_users</h2>";
-                $stmt = $pdo->query("SELECT id, username, email, is_active, created_at FROM superadmin_users");
+                $stmt = $pdo->query("SELECT id, username, email, status, created_at FROM superadmin_users");
                 $users = $stmt->fetchAll();
                 
                 if (count($users) > 0) {
                     echo "<p>Găsiți <strong>" . count($users) . "</strong> utilizatori:</p>";
                     echo "<table border='1' cellpadding='5' cellspacing='0'>";
-                    echo "<tr><th>ID</th><th>Username</th><th>Email</th><th>Active</th><th>Created</th></tr>";
+                    echo "<tr><th>ID</th><th>Username</th><th>Email</th><th>Status</th><th>Created</th></tr>";
                     foreach ($users as $user) {
                         echo "<tr>";
                         echo "<td>{$user['id']}</td>";
                         echo "<td>{$user['username']}</td>";
                         echo "<td>{$user['email']}</td>";
-                        echo "<td>" . ($user['is_active'] ? 'Da' : 'Nu') . "</td>";
+                        echo "<td>{$user['status']}</td>";
                         echo "<td>{$user['created_at']}</td>";
                         echo "</tr>";
                     }
