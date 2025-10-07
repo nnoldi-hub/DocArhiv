@@ -24,28 +24,16 @@ function loadLocalBootstrapJS() {
 
 // Actualizează funcția din helpers.php
 function renderBootstrapAssets() {
-    // Folosim assets-uri locale pentru production
-    if (defined('APP_URL') && strpos(APP_URL, 'gusturidelatara.ro') !== false) {
-        echo "\n<!-- Local Assets pentru Hostico -->\n";
-        echo '<link href="/assets/css/bootstrap.min.css" rel="stylesheet">' . "\n";
-        echo '<link href="/assets/css/bootstrap-icons.css" rel="stylesheet">' . "\n";
-        return;
-    }
-    
-    // Fallback la CDN pentru development local
-    echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">';
-    echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">';
+    // Preferă căi relative din /public pentru compatibilitate maximă
+    // Vor rezolva către /public/assets/... indiferent de rewrite în root
+    echo "\n<!-- Local Assets -->\n";
+    echo '<link href="assets/css/bootstrap.min.css" rel="stylesheet">' . "\n";
+    echo '<link href="assets/css/bootstrap-icons.css" rel="stylesheet">' . "\n";
 }
 
 function renderBootstrapJS() {
-    // Folosim assets-uri locale pentru production
-    if (defined('APP_URL') && strpos(APP_URL, 'gusturidelatara.ro') !== false) {
-        echo "\n<!-- Bootstrap JS Local -->\n";
-        echo '<script src="/assets/js/bootstrap.bundle.min.js"></script>' . "\n";
-        return;
-    }
-    
-    // Fallback la CDN pentru development local
-    echo '<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>';
+    // Cale relativă din /public
+    echo "\n<!-- Bootstrap JS Local -->\n";
+    echo '<script src="assets/js/bootstrap.bundle.min.js"></script>' . "\n";
 }
 ?>
