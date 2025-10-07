@@ -1,84 +1,25 @@
-# Apache Configuration pentru Arhiva Documente
-# public/.htaccess
+###############################################
+# Minimal .htaccess for shared hosting (Hostico)
+# Keep only rewrite rules to avoid 500 errors
+###############################################
 
-# Activează RewriteEngine
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    
-    # Set base pentru aplicație - diferit pentru production vs development
     RewriteBase /
-    
-    # Protejează directoarele sistem (accesate prin relative paths)
-    RewriteRule ^(config|includes|storage|database)/ - [F,L]
-    
-    # Permite accesul la assets
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^assets/(.*)$ assets/$1 [L]
-    
-    # Rutare pentru fișiere existente
+
+    # Allow direct access to existing files/folders
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
-    
-    # Rutare pentru fișiere PHP din public
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php [QSA,L]
+
+    # Route everything else to index.php
+    RewriteRule ^ index.php [QSA,L]
 </IfModule>
 
-# Protecție fișiere sensibile
-<FilesMatch "\.(sql|log|ini|md|json|lock|bak)$">
-    <IfModule mod_authz_core.c>
-        Require all denied
-    </IfModule>
-    <IfModule !mod_authz_core.c>
-        Order allow,deny
-        Deny from all
-    </IfModule>
-</FilesMatch>
-
-# Dezactivează listarea directoarelor
+# Prevent directory listing (safe on most hosts)
 Options -Indexes
 
-# Setări securitate headers
-<IfModule mod_headers.c>
-    # Protecție XSS
-    Header set X-XSS-Protection "1; mode=block"
-    
-    # Protecție Clickjacking
-    Header always set X-Frame-Options "SAMEORIGIN"
-    
-    # Protecție MIME sniffing
-    Header set X-Content-Type-Options "nosniff"
-    
-    # Referrer Policy
-    Header set Referrer-Policy "strict-origin-when-cross-origin"
-</IfModule>
-
-# Compresie GZIP
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
-</IfModule>
-
-# Cache browser pentru assets statice
-<IfModule mod_expires.c>
-    ExpiresActive On
-    
-    # Images
-    ExpiresByType image/jpeg "access plus 1 year"
-    ExpiresByType image/png "access plus 1 year"
-    ExpiresByType image/gif "access plus 1 year"
-    ExpiresByType image/svg+xml "access plus 1 year"
-    ExpiresByType image/x-icon "access plus 1 year"
-    
-    # CSS și JavaScript
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
-    
-    # HTML
-    ExpiresByType text/html "access plus 0 seconds"
-</IfModule>
-
-# Character encoding
-AddDefaultCharset UTF-8
+# Deny access to sensitive file types if any land in public by mistake
+<FilesMatch "\.(sql|log|ini|md|json|lock|bak)$">
+    Require all denied
+</FilesMatch>
