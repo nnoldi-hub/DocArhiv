@@ -1,0 +1,19 @@
+# Root .htaccess to route all requests to /public
+# This is required when the web root points to the repository root
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # If the request is already for the public folder, do nothing
+    RewriteRule ^public/ - [L]
+
+    # Route favicon and robots directly if present in public
+    RewriteRule ^favicon\.ico$ public/favicon.ico [L]
+    RewriteRule ^robots\.txt$ public/robots.txt [L]
+
+    # Route everything else to /public
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
