@@ -5,11 +5,11 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
-    # Set base pentru aplicație
-    RewriteBase /document-archive/public/
+    # Set base pentru aplicație - diferit pentru production vs development
+    RewriteBase /
     
     # Protejează directoarele sistem (accesate prin relative paths)
-    RewriteRule ^\.\./(config|includes|storage|database)/ - [F,L]
+    RewriteRule ^(config|includes|storage|database)/ - [F,L]
     
     # Permite accesul la assets
     RewriteCond %{REQUEST_FILENAME} !-f

@@ -1,16 +1,16 @@
+<?php 
+// Include configurația pentru APP_URL
+require_once '../config/config.php';
+// Include helper pentru assets local
+require_once '../includes/functions/assets.php';
+?>
 <!DOCTYPE html>
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arhiva Documente - Sistem Electronic de Arhivare</title>
-    <?php 
-    // Include configurația pentru APP_URL
-    require_once '../config/config.php';
-    // Include helper pentru assets local
-    require_once '../includes/functions/assets.php';
-    renderBootstrapAssets();
-    ?>
+    <?php renderBootstrapAssets(); ?>
     <style>
         :root {
             --primary-color: #2563eb;
