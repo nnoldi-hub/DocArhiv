@@ -18,6 +18,15 @@ $dbname = 'rbcjgzba_DocArhiv';
 $username = 'rbcjgzba_nnoldi';
 $password = 'PetreIonel205!';
 
+// Test alternative database names
+$possibleDbNames = [
+    'rbcjgzba_DocArhiv',
+    'rbcjgzba_docarhiv',
+    'rbcjgzba_DocArhiv',
+    'DocArhiv',
+    'docarhiv'
+];
+
 echo "<h2>Credențiale Folosite:</h2>";
 echo "<ul>";
 echo "<li><strong>Host:</strong> $host</li>";
@@ -42,15 +51,49 @@ try {
     echo "<p style='color: green;'>✅ <strong>Conexiune la MySQL Server reușită!</strong></p>";
     
     // Test 2: Verifică dacă baza de date există
-    echo "<h2>Test 2: Verifică Baza de Date</h2>";
+    echo "<h2>Test 2: Lista Toate Bazele de Date</h2>";
+    $stmt = $pdo->query("SHOW DATABASES");
+    $databases = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    
+    echo "<p>Găsite <strong>" . count($databases) . "</strong> baze de date:</p>";
+    echo "<ul>";
+    foreach ($databases as $db) {
+        $highlight = (stripos($db, 'DocArhiv') !== false || stripos($db, 'docarhiv') !== false) ? ' style="color: red; font-weight: bold;"' : '';
+        echo "<li$highlight>$db</li>";
+    }
+    echo "</ul>";
+    
+    // Test 3: Găsește numele corect
+    echo "<h2>Test 3: Testează Nume Posibile</h2>";
+    $correctDbName = null;
+    foreach ($possibleDbNames as $testName) {
+        $stmt = $pdo->query("SHOW DATABASES LIKE '$testName'");
+        $result = $stmt->fetch();
+        if ($result) {
+            echo "<p style='color: green;'>✅ Găsit: <strong>$testName</strong></p>";
+            $correctDbName = $testName;
+            break;
+        } else {
+            echo "<p style='color: gray;'>❌ Nu există: $testName</p>";
+        }
+    }
+    
+    if (!$correctDbName) {
+        echo "<p style='color: red;'>❌ Nicio variantă nu funcționează! Vezi lista de mai sus pentru numele exact.</p>";
+        exit;
+    }
+    
+    $dbname = $correctDbName;
+    
+    echo "<h2>Test 4: Verifică Baza de Date Corectă</h2>";
     $stmt = $pdo->query("SHOW DATABASES LIKE '$dbname'");
     $dbExists = $stmt->fetch();
     
     if ($dbExists) {
-        echo "<p style='color: green;'>✅ <strong>Baza de date '$dbname' există!</strong></p>";
+        echo "<p style='color: green;'>✅ <strong>Baza de date '$dbname' există și e accesibilă!</strong></p>";
         
-        // Test 3: Conectare la baza de date specifică
-        echo "<h2>Test 3: Conectare la Baza de Date Specifică</h2>";
+        // Test 5: Conectare la baza de date specifică
+        echo "<h2>Test 5: Conectare la Baza de Date Specifică</h2>";
         $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
         echo "<p>DSN: $dsn</p>";
         
@@ -61,8 +104,8 @@ try {
         
         echo "<p style='color: green;'>✅ <strong>Conexiune la baza de date '$dbname' reușită!</strong></p>";
         
-        // Test 4: Verifică tabelele
-        echo "<h2>Test 4: Liste Tabele</h2>";
+        // Test 6: Verifică tabelele
+        echo "<h2>Test 6: Liste Tabele</h2>";
         $stmt = $pdo->query("SHOW TABLES");
         $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
         
@@ -74,13 +117,13 @@ try {
             }
             echo "</ul>";
             
-            // Test 5: Verifică tabelul superadmin_users
-            echo "<h2>Test 5: Verifică Tabelul superadmin_users</h2>";
+            // Test 7: Verifică tabelul superadmin_users
+            echo "<h2>Test 7: Verifică Tabelul superadmin_users</h2>";
             if (in_array('superadmin_users', $tables)) {
                 echo "<p style='color: green;'>✅ <strong>Tabelul 'superadmin_users' există!</strong></p>";
                 
-                // Test 6: Citește userii
-                echo "<h2>Test 6: Citește Useri din superadmin_users</h2>";
+                // Test 8: Citește userii
+                echo "<h2>Test 8: Citește Useri din superadmin_users</h2>";
                 $stmt = $pdo->query("SELECT id, username, email, is_active, created_at FROM superadmin_users");
                 $users = $stmt->fetchAll();
                 
@@ -99,8 +142,8 @@ try {
                     }
                     echo "</table>";
                     
-                    // Test 7: Verifică parola
-                    echo "<h2>Test 7: Test Autentificare</h2>";
+                    // Test 9: Verifică parola
+                    echo "<h2>Test 9: Test Autentificare</h2>";
                     $stmt = $pdo->prepare("SELECT * FROM superadmin_users WHERE username = :username");
                     $stmt->execute(['username' => 'superadmin']);
                     $user = $stmt->fetch();
