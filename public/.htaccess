@@ -1,25 +1,20 @@
 ###############################################
-# Minimal .htaccess for shared hosting (Hostico)
-# Keep only rewrite rules to avoid 500 errors
+# Ultra-minimal .htaccess for restrictive hosts
+# Only rewrite rules, nothing else
 ###############################################
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /
 
-    # Allow direct access to existing files/folders
+    # Serve existing files/folders directly
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^ - [L]
 
-    # Route everything else to index.php
+    # Otherwise route to index.php
     RewriteRule ^ index.php [QSA,L]
+    
+    # Never rewrite asset files (CSS/JS/fonts/images)
+    RewriteRule ^assets/ - [L]
+    RewriteRule ^(.+)\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$ - [L]
 </IfModule>
-
-# Prevent directory listing (safe on most hosts)
-Options -Indexes
-
-# Deny access to sensitive file types if any land in public by mistake
-<FilesMatch "\.(sql|log|ini|md|json|lock|bak)$">
-    Require all denied
-</FilesMatch>
