@@ -1,0 +1,37 @@
+###############################################
+# Ultra-minimal .htaccess for restrictive hosts
+# Only rewrite rules, nothing else
+###############################################
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Never rewrite asset files (CSS/JS/fonts/images)
+    RewriteRule ^assets/ - [L]
+    RewriteRule ^(.+)\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$ - [L]
+
+    # Serve existing files/folders directly
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Otherwise route to index.php
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# Force access to static assets (fix 403 Forbidden)
+<FilesMatch "\.(css|js|woff|woff2|ttf|eot|svg|png|jpg|jpeg|gif|ico)$">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Allow from all
+    </IfModule>
+</FilesMatch>
+
+# Set correct MIME types
+AddType text/css .css
+AddType application/javascript .js
+AddType font/woff .woff
+AddType font/woff2 .woff2

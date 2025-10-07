@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ArchivalExport version="1.0">
+  <GeneratedAt>2025-10-03T22:18:41+03:00</GeneratedAt>
+  <CompanyFilter>1</CompanyFilter>
+  <From/>
+  <To/>
+  <ConvertPDFA>true</ConvertPDFA>
+  <Documents>
+    <Document>
+      <Id>1</Id>
+      <Title>2</Title>
+      <OriginalFile>2.png</OriginalFile>
+      <StoredPath>68df8762e866c_1759479650.png</StoredPath>
+      <HashSHA256/>
+      <Size>257953</Size>
+      <Mime/>
+      <CreatedAt>2025-10-03 11:20:50</CreatedAt>
+      <CompanyId>1</CompanyId>
+    </Document>
+  </Documents>
+</ArchivalExport>

@@ -1,0 +1,19 @@
+# Hostico Compatible .htaccess
+# Root .htaccess pentru public_html/
+
+# DirectoryIndex
+DirectoryIndex index.php index.html
+
+# Rutare către public folder
+RewriteEngine On
+
+# Assets din public folder
+RewriteRule ^assets/(.*)$ public/assets/$1 [L]
+
+# Alte fișiere din public folder
+RewriteRule ^(.*\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2))$ public/$1 [L]
+
+# Rutează totul prin public/index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/index.php [L]

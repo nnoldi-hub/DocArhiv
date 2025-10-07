@@ -1,0 +1,7 @@
+[2025-10-03 22:38:49] ERROR: Database Error: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'company_id' cannot be null | Context: {"sql":"INSERT INTO activity_logs (company_id, user_id, action_type, description, ip_address, user_agent, created_at) VALUES (:company_id, :user_id, :action_type, :description, :ip_address, :user_agent, :created_at)"}
+[2025-10-03 22:38:49] ERROR: Failed to log activity: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'company_id' cannot be null
+[2025-10-03 22:38:49] ERROR: Failed to clear remember token: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'arhiva_documente.superadmin_remember_tokens' doesn't exist
+[2025-10-03 22:44:53] ERROR: Failed to clear remember token: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'arhiva_documente.user_remember_tokens' doesn't exist
+[2025-10-03 23:15:42] ERROR: Database Error: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'company_id' cannot be null | Context: {"sql":"INSERT INTO activity_logs (company_id, user_id, action_type, description, ip_address, user_agent, created_at) VALUES (:company_id, :user_id, :action_type, :description, :ip_address, :user_agent, :created_at)"}
+[2025-10-03 23:15:42] ERROR: Failed to log activity: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'company_id' cannot be null
+[2025-10-03 23:15:42] ERROR: Failed to clear remember token: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'arhiva_documente.superadmin_remember_tokens' doesn't exist

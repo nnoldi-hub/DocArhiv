@@ -51,7 +51,7 @@ try {
         echo "</table>";
         
         // Generează hash-ul noii parole
-        $newPassword = 'admin123';
+        $newPassword = 'ArhivaSuper0508!';
         $newHash = password_hash($newPassword, PASSWORD_BCRYPT);
         
         echo "<h2>🔑 Actualizare Parolă</h2>";
