@@ -13,7 +13,7 @@ try {
     
     // Găsește documentul în compania curentă
     $stmt = $db->prepare("
-        SELECT id, title, file_name, file_path
+        SELECT id, title, original_filename as file_name, stored_filename, file_path
         FROM documents 
         WHERE id = ? AND company_id = ? AND status = 'active'
     ");

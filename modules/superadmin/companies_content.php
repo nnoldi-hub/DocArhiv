@@ -1,8 +1,12 @@
 <?php
 // Procesarea formularelor
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    error_log("=== POST REQUEST RECEIVED ===");
+    error_log("POST Data: " . print_r($_POST, true));
+    
     try {
         $action = sanitizeInput($_POST['action']);
+        error_log("Action received: " . $action);
         $db = new Database();
 
         if (!function_exists('generateSecurePassword')) {
@@ -28,11 +32,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         switch ($action) {
             case 'add_company':
+                error_log("=== ADD COMPANY DEBUG START ===");
+                error_log("POST data: " . print_r($_POST, true));
+                
                 $company_name = sanitizeInput($_POST['company_name']);
                 $email = sanitizeInput($_POST['email']);
-                $subscription = sanitizeInput($_POST['subscription_status']);
+                $status = sanitizeInput($_POST['subscription_status']); // Mapăm la coloana status
                 $create_admin = isset($_POST['create_admin']) ? true : false;
                 $admin_name = sanitizeInput($_POST['admin_name'] ?? '');
+                
+                error_log("Company name: $company_name");
+                error_log("Email: $email");
+                error_log("Create admin: " . ($create_admin ? 'Yes' : 'No'));
                 $admin_email = sanitizeInput($_POST['admin_email'] ?? '');
                 $admin_username = sanitizeInput($_POST['admin_username'] ?? '');
                 
@@ -60,12 +71,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 try {
                     // Inserează compania
                     $result = $db->query("
-                        INSERT INTO companies (company_name, email, subscription_status, created_at) 
+                        INSERT INTO companies (name, email, status, created_at) 
                         VALUES (:name, :email, :status, NOW())
                     ")
                     ->bind(':name', $company_name)
                     ->bind(':email', $email)
-                    ->bind(':status', $subscription)
+                    ->bind(':status', $status)
                     ->execute();
                     
                     if (!$result) {
@@ -76,28 +87,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     // Creează admin-ul dacă este solicitat
                     if ($create_admin && !empty($admin_name) && !empty($admin_email) && !empty($admin_username)) {
-                        // Verifică dacă username-ul sau email-ul admin există în aceeași companie
-                        $existing_user = $db->query("
+                        // Verifică dacă username-ul admin există în aceeași companie
+                        $existing_username = $db->query("
                             SELECT id FROM users 
-                            WHERE company_id = :company_id 
-                            AND (username = :username OR email = :email)
+                            WHERE company_id = :company_id AND username = :username
                         ")
                         ->bind(':company_id', $company_id)
                         ->bind(':username', $admin_username)
+                        ->fetch();
+                        
+                        if ($existing_username) {
+                            throw new Exception('Un utilizator cu acest username există deja în companie!');
+                        }
+                        
+                        // Verifică dacă email-ul admin există în alte companii (nu în aceeași companie)
+                        $existing_email = $db->query("
+                            SELECT id FROM users 
+                            WHERE company_id != :company_id AND email = :email
+                        ")
+                        ->bind(':company_id', $company_id)
                         ->bind(':email', $admin_email)
                         ->fetch();
                         
-                        if ($existing_user) {
-                            throw new Exception('Un utilizator cu acest username sau email există deja în companie!');
+                        if ($existing_email) {
+                            throw new Exception('Un utilizator cu acest email există deja în altă companie!');
                         }
                         
                         // Parolă furnizată sau generată
                         $raw_password = trim($_POST['admin_password'] ?? '');
                         if ($raw_password === '') {
                             $raw_password = generateSecurePassword();
+                            error_log("Generated password: " . $raw_password);
+                        } else {
+                            error_log("Using provided password: " . $raw_password);
                         }
                         $temp_password = $raw_password; // pentru afișare
                         $hashed_password = password_hash($temp_password, PASSWORD_DEFAULT);
+                        
+                        error_log("Admin credentials - Username: " . $admin_username . ", Email: " . $admin_email . ", Password: " . $temp_password);
                         
                         // Inserează admin-ul
                         $admin_result = $db->query("
@@ -124,13 +151,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                            ->execute();
                         
                         $db->commit();
-                        $_SESSION['success'] = 'Compania și admin-ul au fost create cu succes! Parola temporară pentru admin: ' . $temp_password;
+                        $_SESSION['success'] = 'Compania și admin-ul au fost create cu succes!<br>
+                        <strong>Date de conectare pentru administrator:</strong><br>
+                        Username: <code>' . $admin_username . '</code><br>
+                        Email: <code>' . $admin_email . '</code><br>
+                        Parolă temporară: <code>' . $temp_password . '</code><br>
+                        <small>Conectează-te la: <a href="/login.php" target="_blank">/login.php</a></small>';
                     } else {
                         $db->commit();
                         $_SESSION['success'] = 'Compania a fost adăugată cu succes!';
                     }
+                    
+                    error_log("=== ADD COMPANY SUCCESS ===");
                 } catch (Exception $e) {
                     $db->rollBack();
+                    error_log("=== ADD COMPANY ERROR: " . $e->getMessage() . " ===");
+                    error_log("Stack trace: " . $e->getTraceAsString());
                     throw $e;
                 }
                 break;
@@ -163,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 
                 // Verifică dacă compania există
-                $company = $db->query("SELECT company_name FROM companies WHERE id = :id")
+                $company = $db->query("SELECT name as company_name FROM companies WHERE id = :id")
                              ->bind(':id', $company_id)
                              ->fetch();
                 
@@ -240,7 +276,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 
                 // Verifică dacă compania și utilizatorul există și aparțin împreună
-                $company = $db->query("SELECT id, company_name FROM companies WHERE id = :id")
+                $company = $db->query("SELECT id, name as company_name FROM companies WHERE id = :id")
                               ->bind(':id', $company_id)
                               ->fetch();
                 
@@ -308,6 +344,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect($_SERVER['REQUEST_URI']);
         
     } catch (Exception $e) {
+        error_log("=== GENERAL ERROR: " . $e->getMessage() . " ===");
+        error_log("Stack trace: " . $e->getTraceAsString());
         $_SESSION['error'] = $e->getMessage();
         redirect($_SERVER['REQUEST_URI']);
     }
@@ -446,7 +484,7 @@ try {
     <i class="bi bi-building text-muted" style="font-size: 4rem;"></i>
     <h4 class="text-muted mt-3">Nu există companii înregistrate</h4>
     <p class="text-muted">Adaugă prima companie pentru a începe.</p>
-    <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addCompanyModal">
+    <button class="btn btn-primary mt-3" onclick="openAddModal()">
         <i class="bi bi-plus-lg me-2"></i>Adaugă Prima Companie
     </button>
 </div>
@@ -468,14 +506,14 @@ try {
         </thead>
         <tbody>
             <?php foreach ($companies as $company): ?>
-            <tr data-status="<?php echo $company['subscription_status']; ?>" data-name="<?php echo strtolower($company['company_name']); ?>" data-company-id="<?php echo $company['id']; ?>" data-company-name="<?php echo htmlspecialchars($company['company_name'], ENT_QUOTES); ?>">
+            <tr data-status="<?php echo $company['subscription_status']; ?>" data-name="<?php echo strtolower($company['name']); ?>" data-company-id="<?php echo $company['id']; ?>" data-company-name="<?php echo htmlspecialchars($company['name'], ENT_QUOTES); ?>">
                 <td>
                     <div class="d-flex align-items-center">
                         <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3">
-                            <?php echo strtoupper(substr($company['company_name'], 0, 2)); ?>
+                            <?php echo strtoupper(substr($company['name'], 0, 2)); ?>
                         </div>
                         <div>
-                            <div class="fw-semibold"><?php echo sanitizeInput($company['company_name']); ?></div>
+                            <div class="fw-semibold"><?php echo sanitizeInput($company['name']); ?></div>
                             <small class="text-muted">ID: <?php echo $company['id']; ?></small>
                         </div>
                     </div>
@@ -525,7 +563,7 @@ try {
                 <td>
                     <div class="btn-group actions-dropdown" role="group">
                         <!-- Buton principal pentru admin -->
-                        <button class="btn btn-primary btn-sm" onclick="createAdmin(<?php echo $company['id']; ?>, '<?php echo addslashes($company['company_name']); ?>')" title="Creează Admin">
+                        <button class="btn btn-primary btn-sm" onclick="createAdmin(<?php echo $company['id']; ?>, '<?php echo addslashes($company['name']); ?>')" title="Creează Admin">
                             <i class="bi bi-person-plus"></i>
                         </button>
                         
@@ -583,7 +621,7 @@ try {
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <button type="button" class="dropdown-item d-flex align-items-center text-danger" onclick="deleteCompany(<?php echo $company['id']; ?>, '<?php echo addslashes($company['company_name']); ?>')">
+                                    <button type="button" class="dropdown-item d-flex align-items-center text-danger" onclick="deleteCompany(<?php echo $company['id']; ?>, '<?php echo addslashes($company['name']); ?>')">
                                         <i class="bi bi-trash me-2"></i>
                                         <span>Șterge</span>
                                     </button>
@@ -600,7 +638,7 @@ try {
 <?php endif; ?>
 
 <!-- Include toate modalurile existente -->
-<?php include 'modals/company_modals.php'; ?>
+<?php include 'modals/company_modals_debug.php'; ?>
 
 <script>
 const companyUsersMap = <?php echo json_encode($company_users_map ?? [], JSON_UNESCAPED_UNICODE); ?>;
@@ -820,3 +858,8 @@ function showTransientBadge(target, text) {
     setTimeout(()=>badge.remove(), 1600);
 }
 </script>
+
+<?php
+// Modalul este deja inclus mai sus
+// include __DIR__ . '/modals/company_modals_debug.php';
+?>

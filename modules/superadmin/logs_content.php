@@ -56,7 +56,7 @@ try{
 }catch(Exception $e){ $total=0; $rows=[]; }
 
 // Companies for filter
-try{ $companies=$db->query("SELECT id, company_name FROM companies ORDER BY company_name")->fetchAll(); }catch(Exception $e){ $companies=[]; }
+try{ $companies=$db->query("SELECT id, name as company_name FROM companies ORDER BY name")->fetchAll(); }catch(Exception $e){ $companies=[]; }
 
 function render_pagination($total,$page,$per){
         $pages=max(1,ceil($total/$per)); if($pages<=1) return '';

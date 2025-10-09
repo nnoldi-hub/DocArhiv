@@ -1,4 +1,4 @@
-<!-- Modal simplu și curat pentru adăugarea companiei -->
+<!-- Modal simplu pentru adăugarea companiei -->
 <div id="addCompanyModal" class="modal" style="display: none; position: fixed; z-index: 1050; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
     <div style="position: relative; margin: 5% auto; width: 90%; max-width: 600px; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
         <div style="padding: 20px; border-bottom: 1px solid #dee2e6;">
@@ -35,7 +35,7 @@
             
             <div style="margin-bottom: 15px;">
                 <label style="display: flex; align-items: center; font-weight: 600;">
-                    <input type="checkbox" name="create_admin" onchange="toggleAdminSection()" style="margin-right: 8px;">
+                    <input type="checkbox" id="createAdminCheck" name="create_admin" onchange="toggleAdminSection()" style="margin-right: 8px;">
                     Creează și un cont de administrator pentru această companie
                 </label>
             </div>
@@ -47,18 +47,17 @@
                 
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; margin-bottom: 5px; font-weight: 600;">Nume complet admin</label>
-                    <input type="text" name="admin_name" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    <input type="text" name="admin_name" id="adminName" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                 </div>
                 
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; margin-bottom: 5px; font-weight: 600;">Username admin</label>
-                    <input type="text" name="admin_username" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    <input type="text" name="admin_username" id="adminUsername" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                 </div>
                 
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; margin-bottom: 5px; font-weight: 600;">Email admin</label>
-                    <input type="email" name="admin_email" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
-                    <small style="color: #6c757d;">Poate fi același email ca al companiei</small>
+                    <input type="email" name="admin_email" id="adminEmail" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                 </div>
                 
                 <div style="margin-bottom: 15px;">
@@ -82,68 +81,54 @@
 </div>
 
 <script>
-console.log('Modal script loaded'); // Debug
-
 function openAddModal() {
-    console.log('openAddModal called'); // Debug
-    const modal = document.getElementById('addCompanyModal');
-    if (modal) {
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden'; // Previne scroll-ul în fundal
-        console.log('Modal opened successfully'); // Debug
-    } else {
-        console.error('Modal not found!'); // Debug
-    }
+    document.getElementById('addCompanyModal').style.display = 'block';
+    document.body.style.overflow = 'hidden'; // Previne scroll-ul în fundal
 }
 
 function closeAddModal() {
-    console.log('closeAddModal called'); // Debug
-    const modal = document.getElementById('addCompanyModal');
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto'; // Restabilește scroll-ul
-        
-        // Reset form
-        const form = modal.querySelector('form');
-        if (form) form.reset();
-        
-        // Ascunde secțiunea admin
-        const adminSection = document.getElementById('adminSection');
-        if (adminSection) adminSection.style.display = 'none';
-        
-        console.log('Modal closed successfully'); // Debug
-    }
+    document.getElementById('addCompanyModal').style.display = 'none';
+    document.body.style.overflow = 'auto'; // Restabilește scroll-ul
+    
+    // Reset form
+    const form = document.querySelector('#addCompanyModal form');
+    if (form) form.reset();
+    
+    // Ascunde secțiunea admin
+    document.getElementById('adminSection').style.display = 'none';
+    document.getElementById('createAdminCheck').checked = false;
 }
 
 function toggleAdminSection() {
-    console.log('toggleAdminSection called'); // Debug
-    const checkbox = document.querySelector('input[name="create_admin"]');
+    const checkbox = document.getElementById('createAdminCheck');
     const section = document.getElementById('adminSection');
+    const fields = ['adminName', 'adminUsername', 'adminEmail'];
     
-    if (checkbox && section) {
-        if (checkbox.checked) {
-            section.style.display = 'block';
-            console.log('Admin section shown'); // Debug
-        } else {
-            section.style.display = 'none';
-            console.log('Admin section hidden'); // Debug
-        }
+    if (checkbox.checked) {
+        section.style.display = 'block';
+        // Face câmpurile obligatorii
+        fields.forEach(id => {
+            const field = document.getElementById(id);
+            if (field) field.required = true;
+        });
+    } else {
+        section.style.display = 'none';
+        // Elimină obligativitatea
+        fields.forEach(id => {
+            const field = document.getElementById(id);
+            if (field) field.required = false;
+        });
     }
 }
 
 function generatePassword() {
-    console.log('generatePassword called'); // Debug
     const length = 12;
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
     let password = "";
     for (let i = 0; i < length; i++) {
         password += charset.charAt(Math.floor(Math.random() * charset.length));
     }
-    const field = document.getElementById('adminPassword');
-    if (field) {
-        field.value = password;
-        console.log('Password generated: ' + password); // Debug
-    }
+    document.getElementById('adminPassword').value = password;
 }
 
 // Închide modal-ul când se face click în afara lui
@@ -159,12 +144,5 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeAddModal();
     }
-});
-
-// Test la încărcare
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, modal should be available'); // Debug
-    const modal = document.getElementById('addCompanyModal');
-    console.log('Modal element:', modal); // Debug
 });
 </script>

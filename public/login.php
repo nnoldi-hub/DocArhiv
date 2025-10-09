@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Verificare User Normal
         $user = $db->query("
-            SELECT u.*, c.company_name, c.subscription_status 
+            SELECT u.*, c.name as company_name, c.status as subscription_status 
             FROM users u
             INNER JOIN companies c ON u.company_id = c.id
             WHERE (u.username = :username OR u.email = :email) 
@@ -69,8 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if ($user && password_verify($password, $user['password'])) {
             // Verificare status subscripție
-            if ($user['subscription_status'] === 'suspended' || $user['subscription_status'] === 'expired') {
-                $error = 'Contul companiei este suspendat sau expirat. Contactați administratorul!';
+            if ($user['subscription_status'] === 'suspended' || $user['subscription_status'] === 'inactive') {
+                $error = 'Contul companiei este suspendat sau inactiv. Contactați administratorul!';
             } else {
                 // Login User
                 $_SESSION['user_id'] = $user['id'];

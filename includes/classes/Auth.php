@@ -528,7 +528,7 @@ class Auth {
     private function canAccessDocument($documentId, $action) {
         try {
             $document = $this->db->query("
-                SELECT company_id, uploaded_by, department_id 
+                SELECT company_id, created_by, department_id 
                 FROM documents 
                 WHERE id = :id AND status = :status
             ")
@@ -551,7 +551,7 @@ class Auth {
             }
             
             // Proprietarul documentului poate tot
-            if ($document['uploaded_by'] == $_SESSION['user_id']) {
+            if ($document['created_by'] == $_SESSION['user_id']) {
                 return true;
             }
             

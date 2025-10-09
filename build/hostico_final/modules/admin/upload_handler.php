@@ -92,7 +92,7 @@ try {
     // Salvează în baza de date
     // Salvează în baza de date (include metadata JSON dacă există)
     $stmt = $db->prepare("
-           INSERT INTO documents (company_id, uploaded_by, title, file_name, file_path, file_size, file_type, mime_type, file_hash, metadata, created_at, status) 
+           INSERT INTO documents (company_id, created_by, title, original_filename, stored_filename, file_path, file_size, mime_type, file_hash, metadata, created_at, status) 
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), 'active')
     ");
     
@@ -102,10 +102,10 @@ try {
         $company_id,
         $user_id,
         $document_title,
-        $file['name'],
-        $unique_name,
+        $file['name'],           // original_filename
+        $unique_name,           // stored_filename  
+        $unique_name,           // file_path
         $file['size'],
-        $file['type'],
         $mimeToStore,
         $sha256,
         $metadataJson

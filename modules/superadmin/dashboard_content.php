@@ -157,7 +157,7 @@ try {
                 try {
                     if ($db) {
                         $activities = $db->query("
-                            SELECT a.*, u.full_name, c.company_name 
+                            SELECT a.*, u.full_name, c.name as company_name 
                             FROM activity_logs a
                             LEFT JOIN users u ON a.user_id = u.id
                             LEFT JOIN companies c ON a.company_id = c.id

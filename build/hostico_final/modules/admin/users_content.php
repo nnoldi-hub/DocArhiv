@@ -166,7 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $db = getDBConnection();
                 
                 // Verifică dacă utilizatorul are documente
-                $stmt = $db->prepare("SELECT COUNT(*) as count FROM documents WHERE uploaded_by = ?");
+                $stmt = $db->prepare("SELECT COUNT(*) as count FROM documents WHERE created_by = ?");
                 $stmt->execute([$user_id]);
                 $doc_count = $stmt->fetch()['count'];
                 
@@ -221,7 +221,7 @@ try {
     $stmt = $db->prepare("
         SELECT u.*, 
                d.name as department_name,
-               (SELECT COUNT(*) FROM documents WHERE uploaded_by = u.id) as document_count
+               (SELECT COUNT(*) FROM documents WHERE created_by = u.id) as document_count
         FROM users u
         LEFT JOIN departments d ON u.department_id = d.id
         WHERE u.company_id = ?

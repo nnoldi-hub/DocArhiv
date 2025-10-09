@@ -13,12 +13,12 @@
             
             <div style="margin-bottom: 15px;">
                 <label style="display: block; margin-bottom: 5px; font-weight: 600;">Nume companie *</label>
-                <input type="text" name="company_name" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                <input type="text" name="company_name" required autocomplete="organization" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
             </div>
             
             <div style="margin-bottom: 15px;">
                 <label style="display: block; margin-bottom: 5px; font-weight: 600;">Email companie *</label>
-                <input type="email" name="email" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                <input type="email" name="email" required autocomplete="email" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
             </div>
             
             <div style="margin-bottom: 15px;">
@@ -47,17 +47,17 @@
                 
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; margin-bottom: 5px; font-weight: 600;">Nume complet admin</label>
-                    <input type="text" name="admin_name" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    <input type="text" name="admin_name" autocomplete="name" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                 </div>
                 
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; margin-bottom: 5px; font-weight: 600;">Username admin</label>
-                    <input type="text" name="admin_username" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    <input type="text" name="admin_username" autocomplete="username" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                 </div>
                 
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; margin-bottom: 5px; font-weight: 600;">Email admin</label>
-                    <input type="email" name="admin_email" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    <input type="email" name="admin_email" autocomplete="email" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                     <small style="color: #6c757d;">Poate fi același email ca al companiei</small>
                 </div>
                 
@@ -66,7 +66,7 @@
                         Parolă inițială (opțional)
                         <button type="button" onclick="generatePassword()" style="margin-left: 10px; padding: 4px 8px; background: #6c757d; color: white; border: none; border-radius: 3px; font-size: 12px; cursor: pointer;">Generează</button>
                     </label>
-                    <input type="text" name="admin_password" id="adminPassword" placeholder="Lasă gol pentru generare automată" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    <input type="text" name="admin_password" id="adminPassword" placeholder="Lasă gol pentru generare automată" autocomplete="new-password" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                     <small style="color: #6c757d;">Minim 8 caractere, include litere mari, mici, cifre și simbol.</small>
                 </div>
             </div>
@@ -81,90 +81,4 @@
     </div>
 </div>
 
-<script>
-console.log('Modal script loaded'); // Debug
-
-function openAddModal() {
-    console.log('openAddModal called'); // Debug
-    const modal = document.getElementById('addCompanyModal');
-    if (modal) {
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden'; // Previne scroll-ul în fundal
-        console.log('Modal opened successfully'); // Debug
-    } else {
-        console.error('Modal not found!'); // Debug
-    }
-}
-
-function closeAddModal() {
-    console.log('closeAddModal called'); // Debug
-    const modal = document.getElementById('addCompanyModal');
-    if (modal) {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto'; // Restabilește scroll-ul
-        
-        // Reset form
-        const form = modal.querySelector('form');
-        if (form) form.reset();
-        
-        // Ascunde secțiunea admin
-        const adminSection = document.getElementById('adminSection');
-        if (adminSection) adminSection.style.display = 'none';
-        
-        console.log('Modal closed successfully'); // Debug
-    }
-}
-
-function toggleAdminSection() {
-    console.log('toggleAdminSection called'); // Debug
-    const checkbox = document.querySelector('input[name="create_admin"]');
-    const section = document.getElementById('adminSection');
-    
-    if (checkbox && section) {
-        if (checkbox.checked) {
-            section.style.display = 'block';
-            console.log('Admin section shown'); // Debug
-        } else {
-            section.style.display = 'none';
-            console.log('Admin section hidden'); // Debug
-        }
-    }
-}
-
-function generatePassword() {
-    console.log('generatePassword called'); // Debug
-    const length = 12;
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
-    let password = "";
-    for (let i = 0; i < length; i++) {
-        password += charset.charAt(Math.floor(Math.random() * charset.length));
-    }
-    const field = document.getElementById('adminPassword');
-    if (field) {
-        field.value = password;
-        console.log('Password generated: ' + password); // Debug
-    }
-}
-
-// Închide modal-ul când se face click în afara lui
-document.addEventListener('click', function(e) {
-    const modal = document.getElementById('addCompanyModal');
-    if (e.target === modal) {
-        closeAddModal();
-    }
-});
-
-// Închide modal-ul cu tasta Escape
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeAddModal();
-    }
-});
-
-// Test la încărcare
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, modal should be available'); // Debug
-    const modal = document.getElementById('addCompanyModal');
-    console.log('Modal element:', modal); // Debug
-});
-</script>
+<!-- JavaScript-ul este definit în superadmin-companies.php -->

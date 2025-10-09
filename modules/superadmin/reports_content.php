@@ -24,7 +24,7 @@ try {
 // Top companies by documents
 $topCompanies = [];
 try {
-    $stmt = $db->query("SELECT c.id, c.company_name, COUNT(d.id) docs, COALESCE(SUM(d.file_size),0) bytes FROM companies c LEFT JOIN documents d ON d.company_id=c.id GROUP BY c.id, c.company_name ORDER BY docs DESC LIMIT 10");
+    $stmt = $db->query("SELECT c.id, c.name as company_name, COUNT(d.id) docs, COALESCE(SUM(d.file_size),0) bytes FROM companies c LEFT JOIN documents d ON d.company_id=c.id GROUP BY c.id, c.name ORDER BY docs DESC LIMIT 10");
     $topCompanies = $stmt->fetchAll();
 } catch (Exception $e) { $topCompanies = []; }
 ?>

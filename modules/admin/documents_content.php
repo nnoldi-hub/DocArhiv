@@ -41,7 +41,25 @@ try {
     
     $where_sql = implode(' AND ', $where_conditions);
     
-    $stmt = $db->query("SELECT d.id, d.title, d.file_size as size, d.created_at, u.full_name as uploader, dept.name as department_name FROM documents d LEFT JOIN users u ON u.id = d.created_by LEFT JOIN departments dept ON dept.id = d.department_id WHERE {$where_sql} ORDER BY d.{$sort} {$order_sql} LIMIT 50");
+    // Query cu taguri incluse
+    $full_query = "
+        SELECT 
+            d.id, d.title, d.file_size as size, d.created_at, 
+            u.full_name as uploader, 
+            dept.name as department_name,
+            GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ', ') as tag_names
+        FROM documents d 
+        LEFT JOIN users u ON u.id = d.created_by 
+        LEFT JOIN departments dept ON dept.id = d.department_id
+        LEFT JOIN document_tags dt ON d.id = dt.document_id
+        LEFT JOIN tags t ON dt.tag_id = t.id
+        WHERE {$where_sql} 
+        GROUP BY d.id
+        ORDER BY d.{$sort} {$order_sql} 
+        LIMIT 50
+    ";
+    
+    $stmt = $db->query($full_query);
     
     foreach ($params as $key => $value) {
         $stmt->bind($key, $value);
@@ -105,15 +123,30 @@ function getSortIcon($column) {
   <div class="card-body">
     <form method="post" enctype="multipart/form-data" action="<?php echo APP_URL; ?>/admin-upload.php">
       <div class="row g-2 align-items-end">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <label for="document_file" class="form-label small text-muted">Fișier</label>
           <input type="file" id="document_file" name="document" class="form-control" required>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <label for="document_title" class="form-label small text-muted">Titlu</label>
           <input type="text" id="document_title" name="title" class="form-control" placeholder="Titlu opțional">
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
+          <label for="document_dept" class="form-label small text-muted">Departament</label>
+          <select id="document_dept" name="department_id" class="form-select">
+            <option value="">Fără departament</option>
+            <?php foreach($departments as $dept): ?>
+              <option value="<?= $dept['id'] ?>">
+                <?= htmlspecialchars($dept['name']) ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="document_tags" class="form-label small text-muted">Taguri</label>
+          <input type="text" id="document_tags" name="tags" class="form-control" placeholder="tag1, tag2">
+        </div>
+        <div class="col-md-2">
           <button class="btn btn-primary w-100"><i class="bi bi-upload me-1"></i>Încarcă</button>
         </div>
       </div>
@@ -132,6 +165,8 @@ function getSortIcon($column) {
               Titlu<?php echo getSortIcon('title'); ?>
             </a>
           </th>
+          <th>Departament</th>
+          <th>Taguri</th>
           <th>Uploader</th>
           <th>
             <a href="<?php echo getSortUrl('file_size'); ?>" class="text-decoration-none text-dark">
@@ -152,6 +187,24 @@ function getSortIcon($column) {
         <tr>
           <td><?php echo $index + 1; ?></td>
           <td><?php echo htmlspecialchars($d['title']); ?></td>
+          <td>
+            <?php if (!empty($d['department_name'])): ?>
+              <span class="badge bg-primary"><?php echo htmlspecialchars($d['department_name']); ?></span>
+            <?php else: ?>
+              <span class="text-muted">-</span>
+            <?php endif; ?>
+          </td>
+          <td>
+            <?php if (!empty($d['tag_names'])): ?>
+              <?php 
+              $tags = explode(', ', $d['tag_names']);
+              foreach ($tags as $tag): ?>
+                <span class="badge bg-secondary me-1"><?php echo htmlspecialchars($tag); ?></span>
+              <?php endforeach; ?>
+            <?php else: ?>
+              <span class="text-muted">-</span>
+            <?php endif; ?>
+          </td>
           <td><?php echo htmlspecialchars($d['uploader'] ?? '-'); ?></td>
           <td><?php echo number_format((int)($d['size'] ?? 0)/1024, 2); ?> KB</td>
           <td><small class="text-muted"><?php echo date('d.m.Y H:i', strtotime($d['created_at'])); ?></small></td>

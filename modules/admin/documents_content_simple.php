@@ -1,55 +1,23 @@
 <?php
 $company_id = (int)($_SESSION['company_id'] ?? 0);
 $q = trim($_GET['q'] ?? '');
-
-// Parametri de sortare (simpli și siguri)
-$sort = $_GET['sort'] ?? 'created_at';
-$order = $_GET['order'] ?? 'desc';
-
-// Validare sortare
-$valid_sorts = ['title', 'file_size', 'created_at'];
-if (!in_array($sort, $valid_sorts)) {
-    $sort = 'created_at';
-}
-if (!in_array($order, ['asc', 'desc'])) {
-    $order = 'desc';
-}
-
 $docs = [];
+
+// Căutare simplă și sigură
 try {
     $db = new Database();
-    $order_sql = strtoupper($order);
-    
     if ($q) {
-        $stmt = $db->query("SELECT d.id, d.title, d.file_size as size, d.created_at, u.full_name as uploader FROM documents d LEFT JOIN users u ON u.id = d.created_by WHERE d.company_id = :cid AND d.status = 'active' AND d.title LIKE :q ORDER BY d.{$sort} {$order_sql} LIMIT 50")
-               ->bind(':cid', $company_id)
-               ->bind(':q', "%{$q}%");
+        $stmt = $db->query("SELECT d.id, d.title, d.file_size as size, d.created_at, u.full_name as uploader FROM documents d LEFT JOIN users u ON u.id = d.created_by WHERE d.company_id = :cid AND d.status = 'active' AND d.title LIKE :q ORDER BY d.created_at DESC LIMIT 50")
+                   ->bind(':cid', $company_id)
+                   ->bind(':q', "%{$q}%");
     } else {
-        $stmt = $db->query("SELECT d.id, d.title, d.file_size as size, d.created_at, u.full_name as uploader FROM documents d LEFT JOIN users u ON u.id = d.created_by WHERE d.company_id = :cid AND d.status = 'active' ORDER BY d.{$sort} {$order_sql} LIMIT 50")
-               ->bind(':cid', $company_id);
+        $stmt = $db->query("SELECT d.id, d.title, d.file_size as size, d.created_at, u.full_name as uploader FROM documents d LEFT JOIN users u ON u.id = d.created_by WHERE d.company_id = :cid AND d.status = 'active' ORDER BY d.created_at DESC LIMIT 50")
+                   ->bind(':cid', $company_id);
     }
     $docs = $stmt->fetchAll();
 } catch(Exception $e) { 
     $docs = [];
-    error_log("Docs query error: " . $e->getMessage());
-}
-
-// Helper pentru URL-uri de sortare
-function getSortUrl($column) {
-    global $sort, $order, $q;
-    $new_order = ($sort === $column && $order === 'asc') ? 'desc' : 'asc';
-    $params = ['sort' => $column, 'order' => $new_order];
-    if ($q) $params['q'] = $q;
-    return 'admin-documents.php?' . http_build_query($params);
-}
-
-// Helper pentru iconița de sortare
-function getSortIcon($column) {
-    global $sort, $order;
-    if ($sort === $column) {
-        return $order === 'asc' ? ' ↑' : ' ↓';
-    }
-    return '';
+    error_log("Documents query error: " . $e->getMessage());
 }
 ?>
 
@@ -89,22 +57,10 @@ function getSortIcon($column) {
       <thead class="table-light">
         <tr>
           <th>#</th>
-          <th>
-            <a href="<?php echo getSortUrl('title'); ?>" class="text-decoration-none text-dark">
-              Titlu<?php echo getSortIcon('title'); ?>
-            </a>
-          </th>
+          <th>Titlu</th>
           <th>Uploader</th>
-          <th>
-            <a href="<?php echo getSortUrl('file_size'); ?>" class="text-decoration-none text-dark">
-              Mărime<?php echo getSortIcon('file_size'); ?>
-            </a>
-          </th>
-          <th>
-            <a href="<?php echo getSortUrl('created_at'); ?>" class="text-decoration-none text-dark">
-              Creat<?php echo getSortIcon('created_at'); ?>
-            </a>
-          </th>
+          <th>Mărime</th>
+          <th>Creat</th>
           <th style="width: 120px;">Acțiuni</th>
         </tr>
       </thead>

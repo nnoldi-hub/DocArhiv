@@ -87,7 +87,7 @@ class DocumentManager {
                     'file_size' => $file['size'],
                     'file_type' => $extension,
                     'mime_type' => $file['type'],
-                    'uploaded_by' => $data['user_id'],
+                    'created_by' => $data['user_id'],
                     'document_date' => $data['document_date'] ?: date('Y-m-d'),
                     'document_number' => $data['document_number'] ?: null,
                     'indexed_content' => $indexedContent
@@ -256,7 +256,7 @@ class DocumentManager {
             FROM documents d
             LEFT JOIN departments dept ON d.department_id = dept.id
             LEFT JOIN folders f ON d.folder_id = f.id
-            LEFT JOIN users u ON d.uploaded_by = u.id
+            LEFT JOIN users u ON d.created_by = u.id
             LEFT JOIN document_tags dt ON d.id = dt.document_id
             LEFT JOIN tags t ON dt.tag_id = t.id
             WHERE d.id = :id AND d.company_id = :company_id AND d.status = 'active'
@@ -383,7 +383,7 @@ class DocumentManager {
             FROM documents d
             LEFT JOIN departments dept ON d.department_id = dept.id
             LEFT JOIN folders f ON d.folder_id = f.id
-            LEFT JOIN users u ON d.uploaded_by = u.id
+            LEFT JOIN users u ON d.created_by = u.id
             LEFT JOIN document_tags dt ON d.id = dt.document_id
             LEFT JOIN tags t ON dt.tag_id = t.id
             WHERE " . $whereClause . "
@@ -442,7 +442,7 @@ class DocumentManager {
         $stats['top_uploaders'] = $this->db->query("
             SELECT u.full_name, COUNT(d.id) as count
             FROM users u
-            LEFT JOIN documents d ON u.id = d.uploaded_by AND d.status = 'active'
+            LEFT JOIN documents d ON u.id = d.created_by AND d.status = 'active'
             WHERE u.company_id = :company_id AND u.status = 'active'
             GROUP BY u.id
             ORDER BY count DESC

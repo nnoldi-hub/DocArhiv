@@ -12,22 +12,21 @@
             <input type="hidden" name="action" value="add_company">
             
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Nume companie *</label>
-                <input type="text" name="company_name" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                <label for="company_name" style="display: block; margin-bottom: 5px; font-weight: 600;">Nume companie *</label>
+                <input type="text" name="company_name" id="company_name" required autocomplete="organization" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
             </div>
             
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Email companie *</label>
-                <input type="email" name="email" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                <label for="company_email" style="display: block; margin-bottom: 5px; font-weight: 600;">Email companie *</label>
+                <input type="email" name="email" id="company_email" required autocomplete="email" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
             </div>
             
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Status abonament</label>
-                <select name="subscription_status" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
-                    <option value="trial">Trial</option>
+                <label for="subscription_status" style="display: block; margin-bottom: 5px; font-weight: 600;">Status abonament</label>
+                <select name="subscription_status" id="subscription_status" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                     <option value="active">Activ</option>
+                    <option value="inactive">Inactiv</option>
                     <option value="suspended">Suspendat</option>
-                    <option value="expired">Expirat</option>
                 </select>
             </div>
             
@@ -46,18 +45,18 @@
                 </p>
                 
                 <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Nume complet admin</label>
-                    <input type="text" name="admin_name" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    <label for="admin_name" style="display: block; margin-bottom: 5px; font-weight: 600;">Nume complet admin</label>
+                    <input type="text" name="admin_name" id="admin_name" autocomplete="name" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                 </div>
                 
                 <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Username admin</label>
-                    <input type="text" name="admin_username" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    <label for="admin_username" style="display: block; margin-bottom: 5px; font-weight: 600;">Username admin</label>
+                    <input type="text" name="admin_username" id="admin_username" autocomplete="username" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                 </div>
                 
                 <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Email admin</label>
-                    <input type="email" name="admin_email" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    <label for="admin_email" style="display: block; margin-bottom: 5px; font-weight: 600;">Email admin</label>
+                    <input type="email" name="admin_email" id="admin_email" autocomplete="email" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                     <small style="color: #6c757d;">Poate fi același email ca al companiei</small>
                 </div>
                 

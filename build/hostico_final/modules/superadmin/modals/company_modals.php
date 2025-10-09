@@ -1,265 +1,170 @@
-<!-- Modal pentru adăugarea companiei -->
-<div class="modal fade" id="addCompanyModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form method="POST">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-building-add me-2"></i>Adaugă Companie Nouă
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="action" value="add_company">
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="company_name" class="form-label">Nume companie *</label>
-                            <input type="text" class="form-control" id="company_name" name="company_name" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="email" class="form-label">Email companie *</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="subscription_status" class="form-label">Status abonament</label>
-                        <select class="form-select" id="subscription_status" name="subscription_status">
-                            <option value="trial">Trial</option>
-                            <option value="active">Activ</option>
-                            <option value="suspended">Suspendat</option>
-                            <option value="expired">Expirat</option>
-                        </select>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="create_admin" name="create_admin" onchange="toggleAdminFields()">
-                        <label class="form-check-label" for="create_admin">
-                            <strong>Creează și un cont de administrator pentru această companie</strong>
-                        </label>
-                    </div>
-                    
-                    <div id="adminFields" style="display: none;">
-                        <div class="alert alert-info">
-                            <i class="bi bi-info-circle me-2"></i>
-                            Completează datele pentru contul de administrator:
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="admin_name" class="form-label">Nume complet admin</label>
-                                <input type="text" class="form-control" id="admin_name" name="admin_name">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="admin_username" class="form-label">Username admin</label>
-                                <input type="text" class="form-control" id="admin_username" name="admin_username">
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="admin_email" class="form-label">Email admin</label>
-                            <input type="email" class="form-control" id="admin_email" name="admin_email">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label d-flex justify-content-between align-items-center">
-                                <span>Parolă inițială (opțional)</span>
-                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="generateAdminPassword()">
-                                    <i class="bi bi-magic me-1"></i>Generează
-                                </button>
-                            </label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="admin_password" name="admin_password" placeholder="Lasă gol pentru generare automată">
-                                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('admin_password', this)" title="Arată/ascunde">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('admin_password', this)" title="Copiază">
-                                    <i class="bi bi-clipboard"></i>
-                                </button>
-                            </div>
-                            <div class="form-text" id="admin_password_help">Minim 8 caractere, include litere mari, mici, cifre și simbol.</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-lg me-2"></i>Adaugă Compania
-                    </button>
-                </div>
-            </form>
+<!-- Modal simplu și curat pentru adăugarea companiei -->
+<div id="addCompanyModal" class="modal" style="display: none; position: fixed; z-index: 1050; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+    <div style="position: relative; margin: 5% auto; width: 90%; max-width: 600px; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        <div style="padding: 20px; border-bottom: 1px solid #dee2e6;">
+            <h5 style="margin: 0; display: flex; align-items: center;">
+                <i class="bi bi-building-add me-2"></i>Adaugă Companie Nouă
+            </h5>
+            <button type="button" onclick="closeAddModal()" style="position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
         </div>
-    </div>
-</div>
-
-<!-- Modal pentru ștergerea companiei -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST">
-                <div class="modal-header">
-                    <h5 class="modal-title text-danger">
-                        <i class="bi bi-exclamation-triangle me-2"></i>Confirmare Ștergere
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        
+        <form method="POST" style="padding: 20px;">
+            <input type="hidden" name="action" value="add_company">
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Nume companie *</label>
+                <input type="text" name="company_name" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Email companie *</label>
+                <input type="email" name="email" required style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Status abonament</label>
+                <select name="subscription_status" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    <option value="trial">Trial</option>
+                    <option value="active">Activ</option>
+                    <option value="suspended">Suspendat</option>
+                    <option value="expired">Expirat</option>
+                </select>
+            </div>
+            
+            <hr style="margin: 20px 0;">
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: flex; align-items: center; font-weight: 600;">
+                    <input type="checkbox" name="create_admin" onchange="toggleAdminSection()" style="margin-right: 8px;">
+                    Creează și un cont de administrator pentru această companie
+                </label>
+            </div>
+            
+            <div id="adminSection" style="display: none; background: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 15px;">
+                <p style="color: #0c5460; margin-bottom: 15px;">
+                    <i class="bi bi-info-circle me-2"></i>Completează datele pentru contul de administrator:
+                </p>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Nume complet admin</label>
+                    <input type="text" name="admin_name" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                 </div>
-                <div class="modal-body">
-                    <input type="hidden" name="action" value="delete_company">
-                    <input type="hidden" name="company_id" id="delete_company_id">
-                    
-                    <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-triangle me-2"></i>
-                        <strong>Atenție!</strong> Această acțiune nu poate fi anulată.
-                    </div>
-                    
-                    <p>Ești sigur că vrei să ștergi compania <strong id="delete_company_name"></strong>?</p>
-                    <p class="text-muted small">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Doar companiile fără utilizatori pot fi șterse.
-                    </p>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Username admin</label>
+                    <input type="text" name="admin_username" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
                 </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-trash me-2"></i>Șterge Compania
-                    </button>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Email admin</label>
+                    <input type="email" name="admin_email" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    <small style="color: #6c757d;">Poate fi același email ca al companiei</small>
                 </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal pentru schimbarea statusului -->
-<div class="modal fade" id="statusModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-gear me-2"></i>Schimbă Status
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">
+                        Parolă inițială (opțional)
+                        <button type="button" onclick="generatePassword()" style="margin-left: 10px; padding: 4px 8px; background: #6c757d; color: white; border: none; border-radius: 3px; font-size: 12px; cursor: pointer;">Generează</button>
+                    </label>
+                    <input type="text" name="admin_password" id="adminPassword" placeholder="Lasă gol pentru generare automată" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px;">
+                    <small style="color: #6c757d;">Minim 8 caractere, include litere mari, mici, cifre și simbol.</small>
                 </div>
-                <div class="modal-body">
-                    <input type="hidden" name="action" value="update_status">
-                    <input type="hidden" name="company_id" id="status_company_id">
-                    <input type="hidden" name="new_status" id="status_new_status">
-                    
-                    <p>Schimbi statusul la: <strong id="status_text"></strong>?</p>
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
-                    <button type="submit" class="btn btn-primary">Confirmă</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal pentru crearea adminului -->
-<div class="modal fade" id="createAdminModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-person-plus me-2"></i>Creează Admin pentru <span id="admin_company_name"></span>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="action" value="create_admin">
-                    <input type="hidden" name="company_id" id="admin_company_id">
-                    
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="admin_full_name" class="form-label">Nume complet *</label>
-                            <input type="text" class="form-control" id="admin_full_name" name="admin_full_name" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="admin_username" class="form-label">Username *</label>
-                            <input type="text" class="form-control" id="admin_username" name="admin_username" required>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="admin_email" class="form-label">Email *</label>
-                        <input type="email" class="form-control" id="admin_email" name="admin_email" required>
-                    </div>
-
-                    <div class="alert alert-info">
-                        <i class="bi bi-info-circle me-2"></i>
-                        <strong>Informație:</strong> Se va genera automat o parolă temporară care va fi afișată după creare.
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-person-plus me-2"></i>Creează Admin
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal pentru asocierea unui admin existent -->
-<div class="modal fade" id="assignAdminModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-person-badge me-2"></i>
-                        Asociază Administrator pentru <span id="assign_admin_company_name"></span>
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="action" value="assign_admin">
-                    <input type="hidden" name="company_id" id="assign_admin_company_id">
-
-                    <div class="mb-3">
-                        <label for="assign_admin_user_id" class="form-label">Selectează utilizatorul *</label>
-                        <select class="form-select" id="assign_admin_user_id" name="user_id" required>
-                            <option value="">Selectează un utilizator...</option>
-                        </select>
-                        <small class="text-muted" id="assign_admin_helper">
-                            Selectează un utilizator existent și promovează-l ca administrator principal al companiei.
-                        </small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
-                    <button type="submit" class="btn btn-primary" id="assign_admin_submit">
-                        <i class="bi bi-check-lg me-2"></i>Salvează Adminul
-                    </button>
-                </div>
-            </form>
-        </div>
+            </div>
+            
+            <div style="text-align: right; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 20px;">
+                <button type="button" onclick="closeAddModal()" style="padding: 8px 16px; margin-right: 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Anulează</button>
+                <button type="submit" style="padding: 8px 16px; background: #0d6efd; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    <i class="bi bi-check-lg me-1"></i>Adaugă Compania
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
 <script>
-function toggleAdminFields() {
-    const checkbox = document.getElementById('create_admin');
-    const fields = document.getElementById('adminFields');
-    
-    if (checkbox.checked) {
-        fields.style.display = 'block';
-        // Face câmpurile obligatorii
-        document.getElementById('admin_name').required = true;
-        document.getElementById('admin_username').required = true;
-        document.getElementById('admin_email').required = true;
+console.log('Modal script loaded'); // Debug
+
+function openAddModal() {
+    console.log('openAddModal called'); // Debug
+    const modal = document.getElementById('addCompanyModal');
+    if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Previne scroll-ul în fundal
+        console.log('Modal opened successfully'); // Debug
     } else {
-        fields.style.display = 'none';
-        // Elimină obligativitatea
-        document.getElementById('admin_name').required = false;
-        document.getElementById('admin_username').required = false;
-        document.getElementById('admin_email').required = false;
+        console.error('Modal not found!'); // Debug
     }
 }
+
+function closeAddModal() {
+    console.log('closeAddModal called'); // Debug
+    const modal = document.getElementById('addCompanyModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // Restabilește scroll-ul
+        
+        // Reset form
+        const form = modal.querySelector('form');
+        if (form) form.reset();
+        
+        // Ascunde secțiunea admin
+        const adminSection = document.getElementById('adminSection');
+        if (adminSection) adminSection.style.display = 'none';
+        
+        console.log('Modal closed successfully'); // Debug
+    }
+}
+
+function toggleAdminSection() {
+    console.log('toggleAdminSection called'); // Debug
+    const checkbox = document.querySelector('input[name="create_admin"]');
+    const section = document.getElementById('adminSection');
+    
+    if (checkbox && section) {
+        if (checkbox.checked) {
+            section.style.display = 'block';
+            console.log('Admin section shown'); // Debug
+        } else {
+            section.style.display = 'none';
+            console.log('Admin section hidden'); // Debug
+        }
+    }
+}
+
+function generatePassword() {
+    console.log('generatePassword called'); // Debug
+    const length = 12;
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+    let password = "";
+    for (let i = 0; i < length; i++) {
+        password += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+    const field = document.getElementById('adminPassword');
+    if (field) {
+        field.value = password;
+        console.log('Password generated: ' + password); // Debug
+    }
+}
+
+// Închide modal-ul când se face click în afara lui
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('addCompanyModal');
+    if (e.target === modal) {
+        closeAddModal();
+    }
+});
+
+// Închide modal-ul cu tasta Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeAddModal();
+    }
+});
+
+// Test la încărcare
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, modal should be available'); // Debug
+    const modal = document.getElementById('addCompanyModal');
+    console.log('Modal element:', modal); // Debug
+});
 </script>

@@ -24,7 +24,7 @@ try {
     
     // Găsește documentul în compania curentă
     $stmt = $db->prepare("
-        SELECT id, title, file_name, file_path, file_type, file_size, created_at, uploaded_by
+        SELECT id, title, original_filename as file_name, stored_filename, file_path, mime_type, file_size, created_at, created_by
         FROM documents 
         WHERE id = ? AND company_id = ? AND status = 'active'
     ");

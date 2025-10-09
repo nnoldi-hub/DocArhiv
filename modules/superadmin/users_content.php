@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $user_id = intval($_POST['user_id']);
                 
                 // Verifică dacă utilizatorul are documente
-                $documents = $db->query("SELECT COUNT(*) as count FROM documents WHERE uploaded_by = :id")
+                $documents = $db->query("SELECT COUNT(*) as count FROM documents WHERE created_by = :id")
                                ->bind(':id', $user_id)
                                ->fetch();
                 
@@ -98,8 +98,8 @@ try {
     $db = new Database();
     
     $users = $db->query("
-        SELECT u.*, c.company_name,
-               (SELECT COUNT(*) FROM documents WHERE uploaded_by = u.id) as document_count
+        SELECT u.*, c.name as company_name,
+               (SELECT COUNT(*) FROM documents WHERE created_by = u.id) as document_count
         FROM users u
         LEFT JOIN companies c ON u.company_id = c.id
         ORDER BY u.created_at DESC
@@ -107,9 +107,9 @@ try {
     
     // Obține companiile pentru filtrare
     $companies = $db->query("
-        SELECT id, company_name 
+        SELECT id, name as company_name 
         FROM companies 
-        ORDER BY company_name
+        ORDER BY name
     ")->fetchAll();
     
 } catch (Exception $e) {
