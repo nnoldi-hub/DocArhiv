@@ -15,6 +15,8 @@ if (!isset($_FILES['document']) || $_FILES['document']['error'] !== UPLOAD_ERR_O
 
 $file = $_FILES['document'];
 $title = trim($_POST['title'] ?? '');
+$department_id = (int)($_POST['department_id'] ?? 0);
+$tags_input = trim($_POST['tags'] ?? '');
 $company_id = (int)($_SESSION['company_id'] ?? 0);
 $user_id = (int)($_SESSION['user_id'] ?? 0);
 
@@ -90,32 +92,66 @@ try {
     }
     
     // Salvează în baza de date
-    // Salvează în baza de date (include metadata JSON dacă există)
+    // Salvează în baza de date (include metadata JSON și department_id dacă există)
     $stmt = $db->prepare("
-           INSERT INTO documents (company_id, uploaded_by, title, file_name, file_path, file_size, file_type, mime_type, file_hash, metadata, created_at, status) 
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), 'active')
+           INSERT INTO documents (company_id, created_by, department_id, title, original_filename, stored_filename, file_path, file_size, mime_type, file_hash, metadata, created_at, status) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), 'active')
     ");
     
     $document_title = $title ?: pathinfo($file['name'], PATHINFO_FILENAME);
+    $dept_to_save = ($department_id > 0) ? $department_id : null;
     
     $stmt->execute([
         $company_id,
         $user_id,
+        $dept_to_save,
         $document_title,
-        $file['name'],
-        $unique_name,
+        $file['name'],           // original_filename
+        $unique_name,           // stored_filename  
+        $unique_name,           // file_path
         $file['size'],
-        $file['type'],
         $mimeToStore,
         $sha256,
         $metadataJson
     ]);
     
+    $document_id = $db->lastInsertId();
+    
+    // Procesează tagurile dacă există
+    if (!empty($tags_input)) {
+        $tags_array = array_map('trim', explode(',', $tags_input));
+        $tags_array = array_filter($tags_array); // elimină tagurile goale
+        
+        foreach ($tags_array as $tag_name) {
+            if (strlen($tag_name) > 0 && strlen($tag_name) <= 50) {
+                // Verifică dacă tag-ul există, dacă nu îl creează
+                $tag_stmt = $db->prepare("SELECT id FROM tags WHERE company_id = ? AND name = ?");
+                $tag_stmt->execute([$company_id, $tag_name]);
+                $tag_id = $tag_stmt->fetchColumn();
+                
+                if (!$tag_id) {
+                    // Creează tag nou
+                    $create_tag = $db->prepare("INSERT INTO tags (company_id, name, created_at) VALUES (?, ?, NOW())");
+                    $create_tag->execute([$company_id, $tag_name]);
+                    $tag_id = $db->lastInsertId();
+                }
+                
+                // Asociază tag-ul cu documentul
+                $assoc_stmt = $db->prepare("INSERT IGNORE INTO document_tags (document_id, tag_id) VALUES (?, ?)");
+                $assoc_stmt->execute([$document_id, $tag_id]);
+                
+                // Incrementează usage_count pentru tag
+                $update_usage = $db->prepare("UPDATE tags SET usage_count = usage_count + 1 WHERE id = ?");
+                $update_usage->execute([$tag_id]);
+            }
+        }
+    }
+    
     $_SESSION['success'] = 'Documentul "' . htmlspecialchars($document_title) . '" a fost încărcat cu succes.';
     
     // Log activitate
     if (function_exists('logActivity')) {
-        logActivity('upload_document', 'Document încărcat: ' . $document_title, 'document', $db->lastInsertId());
+        logActivity('upload_document', 'Document încărcat: ' . $document_title, 'document', $document_id);
     }
     
 } catch (Exception $e) {

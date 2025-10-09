@@ -219,6 +219,9 @@ function getSortIcon($column) {
               <a class="btn btn-outline-info" href="print.php?id=<?php echo (int)$d['id']; ?>" target="_blank" title="Print">
                 <i class="bi bi-printer"></i>
               </a>
+              <a class="btn btn-outline-warning" href="admin-edit-document.php?id=<?php echo (int)$d['id']; ?>" title="Editează">
+                <i class="bi bi-pencil"></i>
+              </a>
               <a class="btn btn-outline-danger" href="delete_document.php?id=<?php echo (int)$d['id']; ?>" 
                  onclick="return confirm('Ștergi documentul?')" title="Șterge">
                 <i class="bi bi-trash"></i>
