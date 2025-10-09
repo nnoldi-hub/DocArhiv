@@ -4,11 +4,7 @@
 
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../includes/classes/database.php';
-require_once __DIR__                    </div>
-                </div>
-            </div>
-        </div>
-    </div>./../includes/functions/security.php';
+require_once __DIR__ . '/../../includes/functions/security.php';
 require_once __DIR__ . '/../../includes/functions/helpers.php';
 
 // Verifică autentificarea
@@ -29,17 +25,12 @@ if ($document_id <= 0) {
 try {
     $db = new Database();
     
-    // Obține datele documentului
+    // Obține datele documentului (query simplu)
     $stmt = $db->query("
-        SELECT d.*, dept.name as department_name,
-               GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ', ') as tag_names,
-               GROUP_CONCAT(t.id ORDER BY t.name SEPARATOR ',') as tag_ids
+        SELECT d.*, dept.name as department_name
         FROM documents d 
         LEFT JOIN departments dept ON d.department_id = dept.id
-        LEFT JOIN document_tags dt ON d.id = dt.document_id
-        LEFT JOIN tags t ON dt.tag_id = t.id
         WHERE d.id = :doc_id AND d.company_id = :company_id AND d.status = 'active'
-        GROUP BY d.id
     ");
     
     $stmt->bind(':doc_id', $document_id);
@@ -51,6 +42,26 @@ try {
         redirect(APP_URL . '/admin-documents.php');
         exit;
     }
+    
+    // Obține tagurile pentru acest document (query separat)
+    $tags_stmt = $db->query("
+        SELECT t.name 
+        FROM tags t 
+        INNER JOIN document_tags dt ON t.id = dt.tag_id 
+        WHERE dt.document_id = :doc_id
+        ORDER BY t.name
+    ");
+    $tags_stmt->bind(':doc_id', $document_id);
+    $tags_result = $tags_stmt->fetchAll();
+    
+    // Construiește string-ul cu taguri
+    $tag_names = array();
+    if ($tags_result) {
+        foreach ($tags_result as $tag) {
+            $tag_names[] = $tag['name'];
+        }
+    }
+    $document['tag_names'] = implode(', ', $tag_names);
     
     // Obține toate departamentele pentru dropdown
     $dept_stmt = $db->query("SELECT id, name FROM departments WHERE company_id = :cid AND status = 'active' ORDER BY name");
@@ -127,10 +138,10 @@ try {
                         <?= csrfField() ?>>
                         
                         <div class="row g-3">
-                            <!-- Informații fișier (readonly) -->
-                            <div class="col-md-6">
-                                <label class="form-label">Nume fișier original</label>
-                                <input type="text" class="form-control" value="<?= htmlspecialchars($document['original_filename']) ?>" readonly>
+                        <input type="hidden" name="document_id" value="<?= $document['id'] ?>">
+                        <?= csrfField() ?>
+                        
+                        <div class="row g-3">
                             </div>
                             
                             <div class="col-md-3">
