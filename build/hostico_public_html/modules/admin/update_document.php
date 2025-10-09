@@ -2,13 +2,14 @@
 // Handler pentru actualizarea documentelor
 // modules/admin/update_document.php
 
+require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../includes/classes/database.php';
 require_once __DIR__ . '/../../includes/functions/security.php';
 require_once __DIR__ . '/../../includes/functions/helpers.php';
 
 // Verifică autentificarea
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    redirect(APP_URL . '/login.php');
+if (!isLoggedIn() || (!hasRole('admin') && !hasRole('manager'))) {
+    redirect('/login.php');
     exit;
 }
 

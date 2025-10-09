@@ -1,6 +1,8 @@
 <?php
 // Handler de printare inclus din public/admin-print.php
 
+require_once __DIR__ . '/../../config/config.php';
+
 $document_id = (int)($_GET['id'] ?? 0);
 
 if (!$document_id) {
@@ -13,7 +15,7 @@ try {
     
     // Găsește documentul în compania curentă
     $stmt = $db->prepare("
-        SELECT id, title, file_name, file_path
+        SELECT id, title, original_filename as file_name, stored_filename, file_path
         FROM documents 
         WHERE id = ? AND company_id = ? AND status = 'active'
     ");

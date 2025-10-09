@@ -1,8 +1,16 @@
 <?php
-require_once __DIR__ . '/../includes/classes/database.php';
-require_once __DIR__ . '/../includes/functions/security.php';
-require_once __DIR__ . '/../includes/functions/helpers.php';
+/**
+ * Admin Edit Document Entry Point
+ * public/admin-edit-document.php
+ */
 
-// Include conținutul din modul
-require_once __DIR__ . '/../modules/admin/edit_document.php';
+require_once '../config/config.php';
+
+// Verifică autentificare și rol Admin/Manager
+if (!isLoggedIn() || (!hasRole('admin') && !hasRole('manager'))) {
+    redirect('/login.php');
+}
+
+// Include modulul de editare
+require_once '../modules/admin/edit_document.php';
 ?>

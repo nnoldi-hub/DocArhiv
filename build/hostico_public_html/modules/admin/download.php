@@ -1,6 +1,8 @@
 <?php
 // Handler de download inclus din public/admin-download.php
 
+require_once __DIR__ . '/../../config/config.php';
+
 $document_id = (int)($_GET['id'] ?? 0);
 
 if (!$document_id) {
@@ -15,7 +17,7 @@ try {
     
     // Găsește documentul în compania curentă
     $stmt = $db->prepare("
-        SELECT file_name, file_path, file_type, title 
+        SELECT original_filename as file_name, stored_filename, file_path, mime_type, title 
         FROM documents 
         WHERE id = ? AND company_id = ? AND status = 'active'
     ");
