@@ -12,8 +12,8 @@ define('CONFIG_LOADED', true);
  * Acest fișier conține toate configurațiile pentru:
  * - Baza de date
  * - Căi și URL-# IMPORTANT: Setează FALSE în producție!
-define('DEBUG_MODE', true);
-define('SHOW_ERRORS', true);
+define('DEBUG_MODE', false);
+define('SHOW_ERRORS', false);
 define('QUERY_DEBUG', false);
 define('PROFILER_ENABLED', false);
 
