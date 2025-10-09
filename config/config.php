@@ -11,8 +11,19 @@ define('CONFIG_LOADED', true);
  * 
  * Acest fișier conține toate configurațiile pentru:
  * - Baza de date
- * - Căi și URL-uri
- * - Setări securitate
+ * - Căi și URL-# IMPORTANT: Setează FALSE în producție!
+define('DEBUG_MODE', true);
+define('SHOW_ERRORS', true);
+define('QUERY_DEBUG', false);
+define('PROFILER_ENABLED', false);
+
+if (DEBUG_MODE) {
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL);
+} else {
+    ini_set('display_errors', 0);
+    error_reporting(0);
+}ări securitate
  * - Setări upload
  * - Email și SMTP
  * - Debugging
