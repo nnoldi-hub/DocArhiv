@@ -1,6 +1,8 @@
 <?php
 // Handler de vizualizare inclus din public/admin-view-document.php
 
+require_once __DIR__ . '/../../config/config.php';
+
 // DEBUG: Verifică calea fișierului actual
 if (isset($_GET['debug'])) {
     echo "Current file: " . __FILE__ . "<br>";

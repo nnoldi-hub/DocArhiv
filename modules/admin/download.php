@@ -1,6 +1,8 @@
 <?php
 // Handler de download inclus din public/admin-download.php
 
+require_once __DIR__ . '/../../config/config.php';
+
 $document_id = (int)($_GET['id'] ?? 0);
 
 if (!$document_id) {

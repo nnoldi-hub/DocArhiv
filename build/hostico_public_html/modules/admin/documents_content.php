@@ -210,19 +210,19 @@ function getSortIcon($column) {
           <td><small class="text-muted"><?php echo date('d.m.Y H:i', strtotime($d['created_at'])); ?></small></td>
           <td>
             <div class="btn-group btn-group-sm">
-              <a class="btn btn-outline-secondary" href="view_document.php?id=<?php echo (int)$d['id']; ?>" title="Vezi">
+              <a class="btn btn-outline-secondary" href="<?= APP_URL ?>/modules/admin/view_document.php?id=<?php echo (int)$d['id']; ?>" title="Vezi">
                 <i class="bi bi-eye"></i>
               </a>
-              <a class="btn btn-outline-success" href="download.php?id=<?php echo (int)$d['id']; ?>" title="Descarcă">
+              <a class="btn btn-outline-success" href="<?= APP_URL ?>/modules/admin/download.php?id=<?php echo (int)$d['id']; ?>" title="Descarcă">
                 <i class="bi bi-download"></i>
               </a>
-              <a class="btn btn-outline-info" href="print.php?id=<?php echo (int)$d['id']; ?>" target="_blank" title="Print">
+              <a class="btn btn-outline-info" href="<?= APP_URL ?>/modules/admin/print.php?id=<?php echo (int)$d['id']; ?>" target="_blank" title="Print">
                 <i class="bi bi-printer"></i>
               </a>
-              <a class="btn btn-outline-warning" href="admin-edit-document.php?id=<?php echo (int)$d['id']; ?>" title="Editează">
+              <a class="btn btn-outline-warning" href="<?= APP_URL ?>/modules/admin/edit_document.php?id=<?php echo (int)$d['id']; ?>" title="Editează">
                 <i class="bi bi-pencil"></i>
               </a>
-              <a class="btn btn-outline-danger" href="delete_document.php?id=<?php echo (int)$d['id']; ?>" 
+              <a class="btn btn-outline-danger" href="<?= APP_URL ?>/modules/admin/delete_document.php?id=<?php echo (int)$d['id']; ?>" 
                  onclick="return confirm('Ștergi documentul?')" title="Șterge">
                 <i class="bi bi-trash"></i>
               </a>
