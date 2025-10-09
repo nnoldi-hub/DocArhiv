@@ -3,7 +3,7 @@
 // modules/admin/update_document.php
 
 require_once __DIR__ . '/../../config/config.php';
-require_once __DIR__ . '/../../includes/classes/database.php';
+require_once __DIR__ . '/../../includes/classes/Database.php';
 require_once __DIR__ . '/../../includes/functions/security.php';
 require_once __DIR__ . '/../../includes/functions/helpers.php';
 
@@ -14,8 +14,10 @@ if (!isLoggedIn() || (!hasRole('admin') && !hasRole('manager'))) {
 }
 
 // Verifică CSRF
-if (!validateCSRF()) {
-    $_SESSION['error'] = 'Token de securitate invalid.';
+try {
+    verify_csrf();
+} catch (Exception $e) {
+    $_SESSION['error'] = $e->getMessage();
     redirect(APP_URL . '/admin-documents.php');
     exit;
 }
@@ -35,11 +37,15 @@ $title = trim($_POST['title'] ?? '');
 $description = trim($_POST['description'] ?? '');
 $department_id = (int)($_POST['department_id'] ?? 0);
 $tags_input = trim($_POST['tags'] ?? '');
+$document_number = trim($_POST['document_number'] ?? '');
+$document_date = $_POST['document_date'] ?? null;
+$expiry_date = $_POST['expiry_date'] ?? null;
+$is_confidential = isset($_POST['is_confidential']) ? 1 : 0;
 
 // Validări
 if (empty($title)) {
     $_SESSION['error'] = 'Titlul documentului este obligatoriu.';
-    redirect(APP_URL . '/modules/admin/edit_document.php?id=' . $document_id);
+    redirect(APP_URL . '/admin-edit-document.php?id=' . $document_id);
     exit;
 }
 
@@ -60,6 +66,9 @@ try {
     // Pregătește datele pentru actualizare
     $dept_to_save = ($department_id > 0) ? $department_id : null;
     $description_to_save = (!empty($description)) ? $description : null;
+    $document_number_to_save = (!empty($document_number)) ? $document_number : null;
+    $document_date_to_save = (!empty($document_date)) ? $document_date : null;
+    $expiry_date_to_save = (!empty($expiry_date)) ? $expiry_date : null;
     
     // Actualizează documentul
     $update_stmt = $db->query("
@@ -67,6 +76,10 @@ try {
             title = :title,
             description = :description,
             department_id = :department_id,
+            document_number = :document_number,
+            document_date = :document_date,
+            expiry_date = :expiry_date,
+            is_confidential = :is_confidential,
             updated_at = NOW()
         WHERE id = :document_id AND company_id = :company_id
     ");
@@ -74,6 +87,10 @@ try {
     $update_stmt->bind(':title', $title);
     $update_stmt->bind(':description', $description_to_save);
     $update_stmt->bind(':department_id', $dept_to_save);
+    $update_stmt->bind(':document_number', $document_number_to_save);
+    $update_stmt->bind(':document_date', $document_date_to_save);
+    $update_stmt->bind(':expiry_date', $expiry_date_to_save);
+    $update_stmt->bind(':is_confidential', $is_confidential);
     $update_stmt->bind(':document_id', $document_id);
     $update_stmt->bind(':company_id', $company_id);
     
@@ -137,7 +154,7 @@ try {
     
 } catch (Exception $e) {
     $_SESSION['error'] = 'Eroare la actualizarea documentului: ' . $e->getMessage();
-    redirect(APP_URL . '/modules/admin/edit_document.php?id=' . $document_id);
+    redirect(APP_URL . '/admin-edit-document.php?id=' . $document_id);
     exit;
 }
 

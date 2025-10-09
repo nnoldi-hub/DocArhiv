@@ -3,7 +3,7 @@
 // modules/admin/edit_document.php
 
 require_once __DIR__ . '/../../config/config.php';
-require_once __DIR__ . '/../../includes/classes/database.php';
+require_once __DIR__ . '/../../includes/classes/Database.php';
 require_once __DIR__ . '/../../includes/functions/security.php';
 require_once __DIR__ . '/../../includes/functions/helpers.php';
 
@@ -135,13 +135,13 @@ try {
                 <div class="card-body">
                     <form method="post" action="admin-update-document.php">
                         <input type="hidden" name="document_id" value="<?= $document['id'] ?>">
-                        <?= csrfField() ?>>
-                        
-                        <div class="row g-3">
-                        <input type="hidden" name="document_id" value="<?= $document['id'] ?>">
                         <?= csrfField() ?>
                         
                         <div class="row g-3">
+                            <!-- Informații read-only -->
+                            <div class="col-md-3">
+                                <label class="form-label">Numele fișierului</label>
+                                <input type="text" class="form-control" value="<?= htmlspecialchars($document['file_name']) ?>" readonly>
                             </div>
                             
                             <div class="col-md-3">
@@ -246,9 +246,8 @@ try {
                     </form>
                 </div>
             </div>
-        </main>
+        </div>
     </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>

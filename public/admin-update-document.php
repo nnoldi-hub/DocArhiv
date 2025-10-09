@@ -14,4 +14,3 @@ if (!isLoggedIn() || (!hasRole('admin') && !hasRole('manager'))) {
 // Include handler-ul de update
 require_once '../modules/admin/update_document.php';
 ?>
-?>
