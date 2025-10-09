@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 }
 
 // Verifică CSRF
-if (!validateCSRF()) {
+if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
     $_SESSION['error'] = 'Token de securitate invalid.';
     redirect(APP_URL . '/admin-documents.php');
     exit;
