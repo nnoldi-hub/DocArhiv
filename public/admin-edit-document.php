@@ -51,5 +51,7 @@ if (file_exists($devModule)) {
     exit;
 }
 
-if (isset($_GET['trace'])) echo "TRACE: module included successfully.\n";
+// Stop here to avoid any accidental trailing output in deployed files
+if (isset($_GET['trace'])) echo "TRACE: module included successfully.\nTerminating script to avoid trailing output.\n";
+exit;
 ?>

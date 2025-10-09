@@ -36,4 +36,6 @@ if (file_exists($devModule)) {
     echo 'Edit module not found';
     exit;
 }
+// Ensure no stray content from this entrypoint is rendered after the module
+exit;
 ?>
