@@ -133,7 +133,7 @@ try {
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form method="post" action="admin-update-document-debug.php">
+                    <form method="post" action="admin-update-document-simple-debug.php">
                         <input type="hidden" name="document_id" value="<?= $document['id'] ?>">
                         <?= csrfField() ?>
                         
